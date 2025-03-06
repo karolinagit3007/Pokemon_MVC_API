@@ -15,29 +15,39 @@ namespace Pokemon_MVC_API.Controllers
             _pokemonService = pokemonService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            List<Pokemon> pokemonList = new List<Pokemon>();
+            const int pageSize = 20;
+            List<Pokemon> pokemonList = await _pokemonService.GetPokemonByPageAsync(page, pageSize);
+            ViewBag.CurrentPage = page;
+            return View(pokemonList);
+        }
 
+        // Nueva acción para mostrar los detalles de un Pokémon
+        public async Task<IActionResult> Details(string id) // "id" es el nombre del Pokémon
+        {
             try
             {
-                pokemonList = await _pokemonService.GetAllPokemonAsync(); // Obtener todos los Pokémon
+                // Obtener los detalles del Pokémon
+                var pokemon = await _pokemonService.GetPokemonDetailsAsync(id);
+                if (pokemon == null)
+                {
+                    return NotFound(); // Si no se encuentra el Pokémon, devuelve un error 404
+                }
+                return View(pokemon); // Pasar el Pokémon a la vista de detalles
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", $"Error: {ex.Message}");
+                return RedirectToAction("Index"); // Redirigir a la lista principal en caso de error
             }
-
-            return View(pokemonList); // Pasar la lista de Pokémon a la vista
         }
-
 
         public IActionResult Privacy()
         {
             return View();
         }
     }
-
 
 
 }

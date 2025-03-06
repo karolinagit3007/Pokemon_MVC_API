@@ -2,8 +2,8 @@ using Pokemon_MVC_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<PokemonService>();
-builder.Services.AddScoped<PokemonService>();  // Registra el servicio de PokemonService explícitamente
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
